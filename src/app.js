@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors"
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import connect from "./db/db.js";
@@ -11,6 +12,7 @@ const app = express()
 
 connect()
 
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())

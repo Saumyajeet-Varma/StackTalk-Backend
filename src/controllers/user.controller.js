@@ -16,6 +16,8 @@ export const registerController = async (req, res) => {
 
         const token = await user.generateJWT();
 
+        delete user._doc.password
+
         res.status(201).json({ user, token });
     }
     catch (err) {
@@ -52,6 +54,8 @@ export const loginController = async (req, res) => {
         }
 
         const token = await user.generateJWT();
+
+        delete user._doc.password
 
         res.status(200).json({ user, token });
     }
