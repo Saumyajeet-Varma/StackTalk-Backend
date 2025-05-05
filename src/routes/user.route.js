@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import { loginController, logoutController, profileController, registerController } from "../controllers/user.controller.js";
+import { getAllUserController, loginController, logoutController, profileController, registerController } from "../controllers/user.controller.js";
 import { authUser } from "../middlewares/auth.middleware.js";
 
 const router = Router()
@@ -25,6 +25,11 @@ router.get('/profile',
 router.get('/logout',
     authUser,
     logoutController
+)
+
+router.get('/all',
+    authUser,
+    getAllUserController
 )
 
 export default router

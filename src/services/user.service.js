@@ -21,3 +21,12 @@ export const createUser = async ({ username, email, password }) => {
         console.error(err)
     }
 }
+
+export const fetchAllUsers = async ({ userId }) => {
+
+    const users = await userModel.find({
+        _id: { $ne: userId }
+    })
+
+    return users
+}
