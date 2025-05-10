@@ -1,7 +1,7 @@
 import { validationResult } from "express-validator";
 import projectModel from "../models/project.model.js";
 import userModel from "../models/user.model.js";
-import { addUsers, createProject, getUserProjects } from "../services/project.service.js";
+import { addUsers, createProject, getProjectById, getUserProjects } from "../services/project.service.js";
 
 export const createProjectController = async (req, res) => {
 
@@ -60,6 +60,24 @@ export const addUsersController = async (req, res) => {
         const project = await addUsers({ userId: loggedInUser._id, projectId, users })
 
         return res.status(200).json({ project })
+    }
+    catch (err) {
+        res.status(400).send(err.message)
+    }
+}
+
+export const getProjectByIdController = async (req, res) => {
+
+    try {
+        const { projectId } = req.params
+
+        const project = await getProjectById({ projectId })
+
+        if (!project) {
+            return res.status(400).send("Project doesn't exist !")
+        }
+
+        res.status(200).json({ project })
     }
     catch (err) {
         res.status(400).send(err.message)
