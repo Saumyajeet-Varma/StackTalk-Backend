@@ -8,7 +8,11 @@ export const createProjectController = async (req, res) => {
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({
+            success: false,
+            message: "Express validation error",
+            error: errors.array(),
+        });
     }
 
     try {
@@ -20,13 +24,24 @@ export const createProjectController = async (req, res) => {
         const newProject = await createProject({ projectName, userId })
 
         if (!newProject) {
-            return res.status(400).send("Project name already exists !")
+            return res.status(400).json({
+                success: false,
+                message: "Project name already exists !",
+            })
         }
 
-        return res.status(201).json({ newProject })
+        return res.status(201).json({
+            success: true,
+            message: "Project created successfully",
+            data: newProject,
+        })
     }
     catch (err) {
-        res.status(400).send(err.message)
+        res.status(400).json({
+            success: false,
+            message: "Something went wrong",
+            error: err.message,
+        })
     }
 }
 
@@ -37,10 +52,18 @@ export const getAllProjectsController = async (req, res) => {
 
         const userProjects = await getUserProjects({ userId: loggedInUser._id });
 
-        return res.status(200).json({ projects: userProjects })
+        return res.status(200).json({
+            success: true,
+            message: "All projects data fetched successfully",
+            data: userProjects,
+        })
     }
     catch (err) {
-        res.status(400).send(err.message)
+        res.status(400).json({
+            success: false,
+            message: "Something went wrong",
+            error: err.message,
+        })
     }
 }
 
@@ -49,7 +72,11 @@ export const addUsersController = async (req, res) => {
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({
+            success: false,
+            message: "Express validation error",
+            error: errors.array(),
+        });
     }
 
     try {
@@ -59,10 +86,18 @@ export const addUsersController = async (req, res) => {
 
         const project = await addUsers({ userId: loggedInUser._id, projectId, users })
 
-        return res.status(200).json({ project })
+        return res.status(200).json({
+            success: true,
+            message: "User added successfully",
+            data: project
+        })
     }
     catch (err) {
-        res.status(400).send(err.message)
+        res.status(400).json({
+            success: false,
+            message: "Something went wrong",
+            error: err.message,
+        })
     }
 }
 
@@ -74,12 +109,23 @@ export const getProjectByIdController = async (req, res) => {
         const project = await getProjectById({ projectId })
 
         if (!project) {
-            return res.status(400).send("Project doesn't exist !")
+            return res.status(400).json({
+                success: false,
+                message: "Project doesn't exist !",
+            })
         }
 
-        res.status(200).json({ project })
+        res.status(200).json({
+            success: true,
+            message: "Project data fetched successfully",
+            data: project
+        })
     }
     catch (err) {
-        res.status(400).send(err.message)
+        res.status(400).json({
+            success: false,
+            message: "Something went wrong",
+            error: err.message,
+        })
     }
 }

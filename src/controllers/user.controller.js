@@ -8,7 +8,11 @@ export const registerController = async (req, res) => {
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({
+            success: false,
+            message: "Express validation error",
+            error: errors.array(),
+        });
     }
 
     try {
@@ -18,10 +22,18 @@ export const registerController = async (req, res) => {
 
         delete user._doc.password
 
-        res.status(201).json({ user, token });
+        res.status(201).json({
+            success: true,
+            message: "User registered successfully",
+            data: { user, token },
+        });
     }
     catch (err) {
-        res.status(400).send(err.message)
+        res.status(400).json({
+            success: false,
+            message: "Something went wrong",
+            error: err.message,
+        })
     }
 }
 
@@ -30,7 +42,11 @@ export const loginController = async (req, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({
+            success: false,
+            message: "Express validation error",
+            error: errors.array(),
+        });
     }
 
     try {
@@ -41,7 +57,8 @@ export const loginController = async (req, res) => {
 
         if (!user) {
             return res.status(401).json({
-                errors: 'Invalid credentials'
+                success: false,
+                message: "Invalid credentials",
             })
         }
 
@@ -49,7 +66,8 @@ export const loginController = async (req, res) => {
 
         if (!isCorrect) {
             return res.status(401).json({
-                errors: 'Invalid credentials'
+                success: false,
+                message: "Invalid credentials",
             })
         }
 
@@ -57,16 +75,28 @@ export const loginController = async (req, res) => {
 
         delete user._doc.password
 
-        res.status(200).json({ user, token });
+        res.status(200).json({
+            success: true,
+            message: "User logged in successfully",
+            data: { user, token },
+        });
     }
     catch (err) {
-        console.log(err);
-        res.status(400).send(err.message);
+        res.status(400).json({
+            success: false,
+            message: "Something went wrong",
+            error: err.message,
+        })
     }
 }
 
 export const profileController = async (req, res) => {
-    res.status(200).json({ user: req.user })
+
+    res.status(200).json({
+        success: true,
+        message: "User profile data fetched",
+        data: { user: req.user },
+    })
 }
 
 export const logoutController = async (req, res) => {
@@ -76,11 +106,17 @@ export const logoutController = async (req, res) => {
 
         redisClient.set(token, 'logout', 'EX', 60 * 60 * 24)
 
-        res.status(200).json({ message: "logged out successfully" })
+        res.status(200).json({
+            success: true,
+            message: "User logged out successfully",
+        })
     }
     catch (err) {
-        console.log(err);
-        res.status(400).send(err.message);
+        res.status(400).json({
+            success: false,
+            message: "Something went wrong",
+            error: err.message,
+        })
     }
 }
 
@@ -91,10 +127,17 @@ export const getAllUserController = async (req, res) => {
 
         const allUsers = await fetchAllUsers({ userId: loggedInUser._id })
 
-        return res.status(200).json({ users: allUsers })
+        return res.status(200).json({
+            success: true,
+            message: "All users data fetched successfully",
+            data: allUsers,
+        })
     }
     catch (err) {
-        console.log(err);
-        res.status(400).send(err.message);
+        res.status(400).json({
+            success: false,
+            message: "Something went wrong",
+            error: err.message,
+        })
     }
 }
