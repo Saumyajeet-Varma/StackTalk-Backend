@@ -4,8 +4,9 @@ import cors from "cors"
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import connect from "./db/db.js";
-import userRoutes from "./routes/user.route.js"
+import userRoutes from "./routes/user.route.js";
 import projectRoutes from "./routes/project.route.js";
+import geminiRoutes from "./routes/gemini.routes.js";
 
 dotenv.config()
 
@@ -21,6 +22,7 @@ app.use(morgan("dev"))
 
 app.use("/users", userRoutes)
 app.use("/projects", projectRoutes)
+app.use("/ai", geminiRoutes)
 
 app.get('/', (req, res) => {
     res.send("Hello world");
