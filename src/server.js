@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
 import app from "./app.js"
 import projectModel from "./models/project.model.js"
+import { generateResult } from "./services/gemini.service.js"
 
 dotenv.config()
 
@@ -54,8 +55,31 @@ io.on('connection', socket => {
 
     socket.join(socket.roomId)
 
-    socket.on('project-message', data => {
-        console.log(data)
+    socket.on('project-message', async data => {
+
+        const message = data.message
+
+        const aiInMessage = message.includes('@ai')
+
+        if (aiInMessage) {
+
+            const prompt = message.replace('@ai', '')
+
+            const result = await generateResult(prompt)
+
+            console.log(result)
+
+            io.to(socket.roomId).emit('project-message', {
+                message: result,
+                sender: {
+                    _id: "ai",
+                    username: "@ai"
+                }
+            })
+
+            return
+        }
+
         socket.broadcast.to(socket.roomId).emit('project-message', data)
     })
 
