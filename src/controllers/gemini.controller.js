@@ -7,11 +7,13 @@ export const getResult = async (req, res) => {
 
         const result = await generateResult(prompt)
 
-        res.status(200).json({
-            success: true,
-            message: "Successfully got Gemini result",
-            data: result
-        })
+        // res.status(200).json({
+        //     success: true,
+        //     message: "Successfully got Gemini result",
+        //     data: result
+        // })
+
+        res.send(result)
     }
     catch (err) {
         res.status(400).json({
