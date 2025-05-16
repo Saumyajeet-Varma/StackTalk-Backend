@@ -61,13 +61,13 @@ io.on('connection', socket => {
 
         const aiInMessage = message.includes('@ai')
 
+        socket.broadcast.to(socket.roomId).emit('project-message', data)
+
         if (aiInMessage) {
 
             const prompt = message.replace('@ai', '')
 
             const result = await generateResult(prompt)
-
-            console.log(result)
 
             io.to(socket.roomId).emit('project-message', {
                 message: result,
@@ -79,8 +79,6 @@ io.on('connection', socket => {
 
             return
         }
-
-        socket.broadcast.to(socket.roomId).emit('project-message', data)
     })
 
     socket.on('event', data => { /* … */ });
