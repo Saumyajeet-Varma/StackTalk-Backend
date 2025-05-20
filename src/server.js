@@ -9,7 +9,7 @@ import { generateResult } from "./services/gemini.service.js"
 
 dotenv.config()
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 8080
 const server = http.createServer(app)
 const io = new Server(server, {
     cors: {
