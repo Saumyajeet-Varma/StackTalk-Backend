@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 const projectSchema = new mongoose.Schema({
 
@@ -18,6 +16,11 @@ const projectSchema = new mongoose.Schema({
             ref: 'user'
         }
     ],
+
+    fileTree: {
+        type: Object,
+        default: {}
+    },
 })
 
 const Project = mongoose.model("project", projectSchema)
