@@ -5,7 +5,8 @@ import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
 import app from "./app.js"
 import projectModel from "./models/project.model.js"
-// import projectMessageModel from "./models/projectMessage.model.js"
+import projectMessageModel from "./models/projectMessage.model.js"
+import User from "./models/user.model.js"
 import { generateResult } from "./services/gemini.service.js"
 
 dotenv.config()
@@ -14,14 +15,16 @@ const port = process.env.PORT || 8080
 const server = http.createServer(app)
 const io = new Server(server, {
     cors: {
-        origin: '*'
+        origin: '*',
+        methods: ["GET", "POST"],
+        credentials: true,
     }
 });
 
 io.use(async (socket, next) => {
 
     try {
-        const token = socket.handshake.auth?.token || socket.handshake.headers.authorization?.split(' ')[1]
+        const token = socket.handshake.auth?.token || socket.handshake.headers.authorization?.split(" ")[1]
         const projectId = socket.handshake.query?.projectId
 
         if (!mongoose.isValidObjectId(projectId)) {
@@ -33,12 +36,13 @@ io.use(async (socket, next) => {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const fullUser = await User.findOne({ email: decoded.email }).select("_id username email");
 
-        if (!decoded) {
+        if (!fullUser) {
             return next(new Error("Invalid token"))
         }
 
-        socket.user = decoded
+        socket.user = fullUser
         socket.project = await projectModel.findById(projectId)
 
         next()
@@ -52,73 +56,40 @@ io.on('connection', socket => {
 
     socket.roomId = socket.project._id.toString()
 
+    socket.join(socket.roomId)
     console.log("User connected")
 
-    socket.join(socket.roomId)
+    // socket.on('event', data => { /* … */ });
 
-    socket.on('project-message', async data => {
+    socket.on("project-message", async (data) => {
 
-        const message = data.message
+        try {
+            io.to(socket.project._id.toString()).emit("project-message", data);
 
-        const aiInMessage = message.includes('@ai')
+            await projectMessageModel.create({
+                projectId: socket.project._id,
+                sender: data.sender,
+                message: data.message,
+            });
 
-        socket.broadcast.to(socket.roomId).emit('project-message', data)
+            if (data.message.includes("@ai")) {
 
-        if (aiInMessage) {
+                const prompt = data.message.replace("@ai", "");
+                const result = await generateResult(prompt);
+                const aiMsg = {
+                    projectId: socket.project._id,
+                    sender: { _id: "ai", username: "@ai" },
+                    message: result,
+                };
 
-            const prompt = message.replace('@ai', '')
-
-            const result = await generateResult(prompt)
-
-            io.to(socket.roomId).emit('project-message', {
-                message: result,
-                sender: {
-                    _id: "ai",
-                    username: "@ai"
-                }
-            })
-
-            return
+                io.to(socket.project._id.toString()).emit("project-message", aiMsg);
+                await projectMessageModel.create(aiMsg);
+            }
         }
-    })
-
-    socket.on('event', data => { /* … */ });
-
-    // socket.on('project-message', async data => {
-    //     const message = data.message;
-
-    //     const aiInMessage = message.includes('@ai');
-
-    //     socket.broadcast.to(socket.roomId).emit('project-message', data);
-
-    //     await projectMessageModel.create({
-    //         projectId: socket.project._id,
-    //         sender: {
-    //             _id: socket.user._id,
-    //             username: socket.user.username
-    //         },
-    //         message
-    //     });
-
-    //     if (aiInMessage) {
-    //         const prompt = message.replace('@ai', '');
-
-    //         const result = await generateResult(prompt);
-
-    //         const aiMsg = {
-    //             projectId: socket.project._id,
-    //             sender: {
-    //                 _id: "ai",
-    //                 username: "@ai"
-    //             },
-    //             message: result
-    //         };
-
-    //         io.to(socket.roomId).emit('project-message', aiMsg);
-
-    //         await projectMessageModel.create(aiMsg);
-    //     }
-    // });
+        catch (err) {
+            console.error("socket err:", err.message);
+        }
+    });
 
     socket.on('disconnect', () => {
         console.log("User disconnected")
