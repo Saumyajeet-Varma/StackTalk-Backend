@@ -7,6 +7,7 @@ import connect from "./db/db.js";
 import userRoutes from "./routes/user.route.js";
 import projectRoutes from "./routes/project.route.js";
 import geminiRoutes from "./routes/gemini.routes.js";
+import projectMessagesRoute from './routes/projectMessage.route.js';
 
 dotenv.config()
 
@@ -23,6 +24,7 @@ app.use(morgan("dev"))
 app.use("/users", userRoutes)
 app.use("/projects", projectRoutes)
 app.use("/ai", geminiRoutes)
+app.use('/project-messages', projectMessagesRoute);
 
 app.get('/', (req, res) => {
     res.send("Hello world");

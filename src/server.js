@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
 import app from "./app.js"
 import projectModel from "./models/project.model.js"
+// import projectMessageModel from "./models/projectMessage.model.js"
 import { generateResult } from "./services/gemini.service.js"
 
 dotenv.config()
@@ -82,6 +83,42 @@ io.on('connection', socket => {
     })
 
     socket.on('event', data => { /* … */ });
+
+    // socket.on('project-message', async data => {
+    //     const message = data.message;
+
+    //     const aiInMessage = message.includes('@ai');
+
+    //     socket.broadcast.to(socket.roomId).emit('project-message', data);
+
+    //     await projectMessageModel.create({
+    //         projectId: socket.project._id,
+    //         sender: {
+    //             _id: socket.user._id,
+    //             username: socket.user.username
+    //         },
+    //         message
+    //     });
+
+    //     if (aiInMessage) {
+    //         const prompt = message.replace('@ai', '');
+
+    //         const result = await generateResult(prompt);
+
+    //         const aiMsg = {
+    //             projectId: socket.project._id,
+    //             sender: {
+    //                 _id: "ai",
+    //                 username: "@ai"
+    //             },
+    //             message: result
+    //         };
+
+    //         io.to(socket.roomId).emit('project-message', aiMsg);
+
+    //         await projectMessageModel.create(aiMsg);
+    //     }
+    // });
 
     socket.on('disconnect', () => {
         console.log("User disconnected")
