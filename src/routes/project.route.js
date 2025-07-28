@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { body } from "express-validator"
 import { authUser } from "../middlewares/auth.middleware.js"
-import { addUsersController, createProjectController, getAllProjectsController, getProjectByIdController, updateFileTreeController } from "../controllers/project.controller.js"
+import { addUsersController, createProjectController, deleteProjectController, getAllProjectsController, getProjectByIdController, updateFileTreeController } from "../controllers/project.controller.js"
 
 const router = Router()
 
@@ -34,5 +34,10 @@ router.put('/update-file-tree',
     body('fileTree').isObject().withMessage('File tree is required'),
     updateFileTreeController
 )
+
+router.delete("/delete/:projectId",
+    authUser,
+    deleteProjectController
+);
 
 export default router

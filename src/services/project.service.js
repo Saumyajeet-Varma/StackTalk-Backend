@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import projectModel from "../models/project.model.js";
+import projectMessageModel from "../models/projectMessage.model.js";
 
 export const createProject = async ({ projectName, userId }) => {
 
@@ -153,3 +154,24 @@ export const updateFileTree = async ({ projectId, fileTree }) => {
 
     return project;
 }
+
+export const deleteProjectAndMessages = async ({ projectId }) => {
+
+    if (!projectId) {
+        throw new Error("Project ID is required");
+    }
+
+    if (!mongoose.isValidObjectId(projectId)) {
+        throw new Error("Invalid project ID");
+    }
+
+    const deletedProject = await projectModel.findByIdAndDelete(projectId);
+
+    if (!deletedProject) {
+        return null;
+    }
+
+    await projectMessageModel.deleteMany({ projectId });
+
+    return deletedProject;
+};
