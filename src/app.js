@@ -33,7 +33,11 @@ app.use("/ai", geminiRoutes)
 app.use('/project-messages', projectMessagesRoute);
 
 app.get('/', (req, res) => {
-    res.send("Hello world");
+    res.send("SERVER IS RNNING....");
+})
+
+app.get("/ping", (req, res) => {
+    res.send("Server is Alive")
 })
 
 export default app;
