@@ -10,7 +10,7 @@ This backend handles authentication, authorization, project room management, cha
 - **Real-Time Chat with Socket.io** – Collaborate instantly with teammates in project rooms.
 - **AI Integration with `@ai`** – Use Gemini LLM for coding help, file tree generation, and Q&A.
 - **File Tree Updates** – Keep project structures synced for AI-generated code.
-- **Modular Backend Architecture** – Controllers, services, and models for scalability.
+- **Modular Backend Architecture** – Controllers, services, routes and models for scalability.
 
 ## Project Structure
 
@@ -152,8 +152,11 @@ npm run dev
 - Push to branch (`git push origin feature-name`)
 - Open a Pull Request
 
+## Related repositories
+
+- **Frontend**: [StackTalk Frontend](https://github.com/Saumyajeet-Varma/StackTalk-Frontend)
+
 ## Author
 
-<a href="https://github.com/saumyajeet-varma">
-    <img src="https://img.icons8.com/?size=100&id=AZOZNnY73haj&format=png&color=000000" alt="Saumyajeet Varma">
-</a>
+- **Saumyajeet Varma**: [GitHub](https://github.com/Saumyajeet-Varma)
+
