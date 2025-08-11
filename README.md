@@ -3,8 +3,6 @@
 **StackTalk** is a collaborative project management and communication platform that combines **real-time team chat** with **AI-powered assistance**.  
 This backend handles authentication, authorization, project room management, chat messaging, and integration with the **Gemini LLM** for AI-driven code generation and structured file tree suggestions.
 
----
-
 ## Features
 
 - **JWT Authentication & Role-Based Authorization** – Secure user login and permission control.
@@ -13,8 +11,6 @@ This backend handles authentication, authorization, project room management, cha
 - **AI Integration with `@ai`** – Use Gemini LLM for coding help, file tree generation, and Q&A.
 - **File Tree Updates** – Keep project structures synced for AI-generated code.
 - **Modular Backend Architecture** – Controllers, services, and models for scalability.
-
----
 
 ## Project Structure
 
@@ -82,10 +78,12 @@ npm install
 Create a `.env` file in the project root:
 
 ```env
-PORT=5000
-MONGO_URI=mongodb+srv://your_mongodb_url
-JWT_SECRET=your_jwt_secret
-GEMINI_API_KEY=your_gemini_api_key
+PORT = 8080
+ALLOWED_ORIGIN = *
+MONGODB_URI = mongodb+srv://your_mongodb_url
+JWT_SECRET = your_jwt_secret
+JWT_EXPIRE = 24h
+GEMINI_API_KEY = your_gemini_api_key
 
 ```
 
